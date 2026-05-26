@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Picture Downloads</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; text-align: center; padding: 40px 20px; background-color: #f8f9fa; color: #333; }
+        .container { max-width: 400px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        h2 { margin-top: 0; font-size: 22px; color: #111; }
+        input { width: 90%; padding: 12px; font-size: 16px; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 15px; text-align: center; box-sizing: border-box; }
+        button { width: 90%; padding: 12px; font-size: 16px; background-color: #007aff; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        .result-box { margin-top: 30px; display: none; }
+        .download-btn { display: inline-block; width: 90%; padding: 14px; font-size: 16px; background-color: #34c759; color: white; text-decoration: none; border-radius: 6px; font-weight: bold; box-sizing: border-box; }
+        .success-text { font-size: 15px; color: #248a3d; margin-bottom: 15px; font-weight: bold; }
+        .error { color: #ff3b30; font-size: 14px; margin-top: 15px; display: none; font-weight: 500; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Enter Your Name</h2>
+    <input type="text" id="userInput" placeholder="Type your name here...">
+    <button onclick="findFile()">Search for picture</button>
+    
+    <div id="errorMsg" class="error">File not found. Please check spelling or capitalization.</div>
+    
+    <div id="result" class="result-box">
+        <div class="success-text">🎉 Image Located!</div>
+        <a id="downloadLink" class="download-btn" href="" download>Click here to download your picture from the Photo Booth</a>
+    </div>
+</div>
+
+<script>
+function findFile() {
+    var name = document.getElementById('userInput').value.trim();
+    var resultBox = document.getElementById('result');
+    var downloadLink = document.getElementById('downloadLink');
+    var errorMsg = document.getElementById('errorMsg');
+
+    resultBox.style.display = "none";
+    errorMsg.style.display = "none";
+
+    if (name === "") return;
+
+    // Checks uppercase and lowercase phone variations safely
+    const extensions = ['.heic', '.HEIC', '.jpg', '.JPG', '.png', '.PNG', '.pdf', '.PDF'];
+    let foundIndex = 0;
+
+    function tryNextExtension() {
+        if (foundIndex >= extensions.length) {
+            errorMsg.style.display = "block";
+            return;
+        }
+
+        let ext = extensions[foundIndex];
+        let testUrl = encodeURIComponent(name) + ext;
+
+        fetch(testUrl, { method: 'HEAD' })
+            .then(response => {
+                if (response.ok) {
+                    downloadLink.href = testUrl;
+                    downloadLink.setAttribute('download', name + ext);
+                    resultBox.style.display = "block";
+                } else {
+                    foundIndex++;
+                    tryNextExtension();
+                }
+            })
+            .catch(() => {
+                foundIndex++;
+                tryNextExtension();
+            });
+    }
+
+    tryNextExtension();
+}
+</script>
+
+</body>
+</html>
