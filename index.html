@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Universal File Finder</title>
+    <title>File Finder</title>
     <style>
         body { font-family: -apple-system, sans-serif; text-align: center; padding: 40px 20px; background-color: #f8f9fa; color: #333; }
         .container { max-width: 400px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
@@ -11,8 +11,8 @@
         input { width: 90%; padding: 12px; font-size: 16px; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 15px; text-align: center; box-sizing: border-box; }
         button { width: 90%; padding: 12px; font-size: 16px; background-color: #007aff; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
         .result-box { margin-top: 30px; display: none; }
-        .preview-frame { max-width: 100%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px; display: none; }
-        .download-btn { display: inline-block; width: 90%; padding: 12px; font-size: 16px; background-color: #34c759; color: white; text-decoration: none; border-radius: 6px; font-weight: bold; box-sizing: border-box; }
+        .download-btn { display: inline-block; width: 90%; padding: 14px; font-size: 16px; background-color: #34c759; color: white; text-decoration: none; border-radius: 6px; font-weight: bold; box-sizing: border-box; }
+        .success-text { font-size: 15px; color: #248a3d; margin-bottom: 15px; font-weight: bold; }
         .error { color: #ff3b30; font-size: 14px; margin-top: 15px; display: none; font-weight: 500; }
     </style>
 </head>
@@ -20,15 +20,15 @@
 
 <div class="container">
     <h2>Enter File Name</h2>
-    <input type="text" id="userInput" placeholder="Type name here (e.g., Photo1)">
-    <button onclick="findFile()">View & Download</button>
+    <input type="text" id="userInput" placeholder="Type image name here...">
+    <button onclick="findFile()">Search File</button>
     
-    <div id="errorMsg" class="error">File not found. Please check spelling or lowercase extensions.</div>
+    <div id="errorMsg" class="error">File not found. Please match uppercase/lowercase exactly.</div>
     
     <div id="result" class="result-box">
-        <img id="displayImage" class="preview-frame" alt="Preview">
-        <embed id="displayPdf" class="preview-frame" type="application/pdf" width="100%" height="300px">
-        <a id="downloadLink" class="download-btn" href="" download>⬇️ Download File</a>
+        <div class="success-text">🎉 File Located Successfully!</div>
+        <!-- Direct secure download button -->
+        <a id="downloadLink" class="download-btn" href="" download>⬇️ Download iPhone Image</a>
     </div>
 </div>
 
@@ -36,20 +36,16 @@
 function findFile() {
     var name = document.getElementById('userInput').value.trim();
     var resultBox = document.getElementById('result');
-    var displayImage = document.getElementById('displayImage');
-    var displayPdf = document.getElementById('displayPdf');
     var downloadLink = document.getElementById('downloadLink');
     var errorMsg = document.getElementById('errorMsg');
 
     resultBox.style.display = "none";
-    displayImage.style.display = "none";
-    displayPdf.style.display = "none";
     errorMsg.style.display = "none";
 
     if (name === "") return;
 
-    // Checks all standard web and phone formats instantly
-    const extensions = ['.jpg', '.JPG', '.jpeg', '.JPEG', '.png', '.PNG', '.pdf', '.PDF'];
+    // Checks uppercase and lowercase iPhone HEIC extensions instantly
+    const extensions = ['.heic', '.HEIC', '.jpg', '.png'];
     let foundIndex = 0;
 
     function tryNextExtension() {
@@ -64,16 +60,9 @@ function findFile() {
         fetch(testUrl, { method: 'HEAD' })
             .then(response => {
                 if (response.ok) {
+                    // Lock file link directly to the button
                     downloadLink.href = testUrl;
                     downloadLink.setAttribute('download', name + ext);
-                    
-                    if (ext.toLowerCase() === '.pdf') {
-                        displayPdf.src = testUrl;
-                        displayPdf.style.display = "block";
-                    } else {
-                        displayImage.src = testUrl;
-                        displayImage.style.display = "block";
-                    }
                     resultBox.style.display = "block";
                 } else {
                     foundIndex++;
