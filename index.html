@@ -23,10 +23,10 @@
     <input type="text" id="userInput" placeholder="Type your name in this box...">
     <button onclick="findFile()">Search for Picture!</button>
     
-    <div id="errorMsg" class="error">Picture not found. Please check your spelling or capitalization. Make sure you only enter your first name and the first letter should be capitalized.</div>
+    <div id="errorMsg" class="error">Your picture was not found. Please check your spelling or capitalization. Make sure you only enter your first name and the first letter should be capitalized.</div>
     
     <div id="result" class="result-box">
-        <div class="success-text">🎉 Picture Found!</div>
+        <div class="success-text">🎉 Your Picture Has Been Found!</div>
         <a id="downloadLink" class="download-btn" href="" download>Click here to download your picture from the Photo Booth!</a>
     </div>
 </div>
@@ -44,7 +44,7 @@ function findFile() {
     if (name === "") return;
 
     // Checks uppercase and lowercase phone variations safely
-    const extensions = ['.heic', '.HEIC', '.jpg', '.JPG', '.png', '.PNG', '.pdf', '.PDF'];
+    const extensions = ['.heic', '.HEIC', '.jpg', '.JPG', '.png', '.PNG', '.pdf', '.PDF', '.mov', '.MOV'];
     let foundIndex = 0;
 
     function tryNextExtension() {
